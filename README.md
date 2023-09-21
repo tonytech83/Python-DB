@@ -28,6 +28,7 @@ Databases are the standard way of utilizing dynamic information in modern techno
 
 - [`PostgreSQL Introduction. Data Types. Working with Tables`](https://github.com/tonytech83/Python-DB/tree/main/01_PostgreSQL/01_Data_Types_and_Table_Basics)
 - [`Basic CRUD`](https://github.com/tonytech83/Python-DB/tree/main/01_PostgreSQL/02_Basic_CRUD)
+- [`Built-in Functions`](https://github.com/tonytech83/Python-DB/tree/main/01_PostgreSQL/03_Built_in_Functions)
 
 ### 2. Python ORM
 
