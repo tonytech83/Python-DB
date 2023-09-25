@@ -1,5 +1,5 @@
--- 08. Bank Profitability
--- url: https://judge.softuni.org/Contests/Compete/Index/4107#7
+-- 09. Notes with Dumbledore
+-- url: https://judge.softuni.org/Contests/Compete/Index/4107#8
 
 SELECT last_name,
        COUNT(notes) AS "Notes with Dumbledore"
