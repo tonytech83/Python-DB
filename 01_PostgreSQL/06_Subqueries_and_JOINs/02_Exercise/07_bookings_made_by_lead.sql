@@ -6,5 +6,5 @@ SELECT b.apartment_id,
        c.first_name,
        c.country
 FROM customers c
-         RIGHT JOIN bookings b USING (customer_id)
+         JOIN bookings b USING (customer_id)
 WHERE c.job_type = 'Lead';
