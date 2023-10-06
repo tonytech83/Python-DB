@@ -17,3 +17,10 @@ BEGIN
 END
 $$
     LANGUAGE plpgsql;
+
+SELECT user_id,
+       level,
+       cash,
+       fn_difficulty_level(level)
+FROM user_games
+ORDER BY user_id;

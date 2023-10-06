@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION fn_full_name(
 ) AS
 $$
 BEGIN
-    full_name := concat_ws(' ', initcap(first_name), initcap(last_name));
+    full_name := initcap(first_name) || ' ' || initcap(last_name);
 END
 $$
     LANGUAGE plpgsql;

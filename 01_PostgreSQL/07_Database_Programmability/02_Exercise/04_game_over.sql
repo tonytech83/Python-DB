@@ -22,4 +22,7 @@ END ;
 $$
     LANGUAGE plpgsql;
 
+--
+-- Test
+--
 SELECT fn_is_game_over(true);

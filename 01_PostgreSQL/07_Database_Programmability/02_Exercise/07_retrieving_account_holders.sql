@@ -1,6 +1,9 @@
 -- 07. Retrieving Account Holders**
 -- url: N/A
 
+--
+-- Solution one
+--
 CREATE OR REPLACE PROCEDURE sp_retrieving_holders_with_balance_higher_than(
     searched_balance NUMERIC
 )
@@ -31,9 +34,40 @@ END;
 $$
     LANGUAGE plpgsql;
 
+--
+-- Solution two
+--
+CREATE OR REPLACE PROCEDURE sp_retrieving_holders_with_balance_higher_than(
+    searched_balance NUMERIC
+)
+AS
+$$
+DECLARE
+    holder        RECORD;
+BEGIN
+    FOR holder IN
+        SELECT concat_ws(' ', ah.first_name, ah.last_name) AS full_name,
+               sum(balance)                                AS total_balance
+        FROM account_holders ah
+                 JOIN accounts a ON ah.id = a.account_holder_id
+        GROUP BY full_name
+        HAVING sum(balance) > searched_balance
+        ORDER BY full_name
+        LOOP
+            RAISE NOTICE '% - %', holder.full_name, holder.total_balance;
+        END LOOP;
+END;
+$$
+    LANGUAGE plpgsql;
+
+--
+-- Calling the procedure
+--
 CALL sp_retrieving_holders_with_balance_higher_than(200000);
 
+--
 -- Expected output:
+--
 -- bank_db.public> CALL sp_retrieving_holders_with_balance_higher_than(200000)
 -- Monika Miteva - 565649.2000
 -- Petar Kirilov - 245656.2300
