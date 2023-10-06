@@ -9,15 +9,14 @@ AS
 $$
 DECLARE
     account_balance NUMERIC;
-    insufficient_balance NUMERIC;
 BEGIN
+    -- check if provided account_id exists
     IF (SELECT balance FROM accounts WHERE id = account_id) IS NULL THEN
         RETURN;
     ELSE
         account_balance := (SELECT balance FROM accounts WHERE id = account_id);
         IF account_balance < money_amount THEN
-            insufficient_balance := round((money_amount - account_balance), 4);
-            RAISE NOTICE 'Insufficient balance to withdraw %', insufficient_balance;
+            RAISE NOTICE 'Insufficient balance to withdraw %', money_amount;
             RETURN;
         ELSE
             UPDATE accounts SET balance = balance - money_amount WHERE id = account_id;
@@ -27,6 +26,3 @@ BEGIN
 END
 $$
     LANGUAGE plpgsql;
-
-
-

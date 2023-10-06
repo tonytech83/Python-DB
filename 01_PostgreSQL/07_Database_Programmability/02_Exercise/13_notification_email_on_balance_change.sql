@@ -5,8 +5,8 @@ CREATE TABLE notification_emails
 (
     id           SERIAL PRIMARY KEY,
     recipient_id INT,
-    subject      VARCHAR(50),
-    body         VARCHAR(100)
+    subject      VARCHAR(100),
+    body         TEXT
 );
 
 CREATE OR REPLACE FUNCTION trigger_fn_send_email_on_balance_change()
@@ -14,9 +14,11 @@ CREATE OR REPLACE FUNCTION trigger_fn_send_email_on_balance_change()
 $$
 BEGIN
     INSERT INTO notification_emails (recipient_id, subject, body)
-    VALUES (NEW.account_id,
-            concat('Balance change for account:', ' ', NEW.account_id),
-            concat_ws(' ', 'On', NOW()::date, 'your balance was changed from', NEW.old_sum, NEW.new_sum));
+    VALUES (
+        NEW.account_id,
+        concat('Balance change for account:', ' ', NEW.account_id),
+        concat_ws(' ', 'On', NOW()::date, 'your balance was changed from', NEW.old_sum,'to', NEW.new_sum,'.')
+        );
     RETURN NEW;
 END;
 $$
