@@ -10,3 +10,10 @@ class Person(models.Model):
 class Blog(models.Model):
     post = models.TextField()
     author = models.CharField(max_length=35)
+
+
+class WeatherForecast(models.Model):
+    date = models.DateField()
+    temperature = models.FloatField()
+    humidity = models.FloatField()
+    precipitation = models.FloatField()
