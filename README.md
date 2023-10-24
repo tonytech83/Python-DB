@@ -13,6 +13,7 @@ In the "Python DB" module, knowledge about PostgreSQL and popular ORM (Object-Re
 ## Language
 
 - `SQL`
+- `Python`
 
 ## Judge System
 
