@@ -22,8 +22,8 @@ def update_delivery_warranty(apps, schema_editor):
             orders_to_delete.append(rec)
 
     if orders_to_delete:
-        # pk__in=[o.pk for o in orders_to_delete] - takes primary keys of orders in list and
-        # store them in specific list type
+        # pk__in=[o.pk for o in orders_to_delete] - takes primary keys of orders form the list
+        # "orders_to_delete" and store them in specific list type
         #
         # filter - method in Django which returns new QuerySet
         #
