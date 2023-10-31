@@ -69,19 +69,23 @@ def get_students_info():
 
 # Exam: 03. Update Students' Emails
 def update_students_emails():
-    new_domain = 'uni-students.com'
-
-    def change_domain(email, domain):
-        local_part, _ = email.split('@')
-        new_email = f"{local_part}@{domain}"
-
-        return new_email
-
     for student in Student.objects.all():
-        student.email = change_domain(student.email, new_domain)
+        new_email = student.email.replace('university.com', 'uni-students.com')
+        student.email = new_email
         student.save()
+
 
 # Test Code
 # update_students_emails()
 # for student in Student.objects.all():
 #     print(student.email)
+
+
+# Exam: 04. Truncate Students
+def truncate_students():
+    Student.objects.all().delete()
+
+# Test Code
+# truncate_students()
+# print(Student.objects.all())
+# print(f"Number of students: {Student.objects.count()}")
