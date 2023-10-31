@@ -13,6 +13,7 @@ django.setup()
 from main_app.models import Student
 
 
+# Exam: 01. Add Students
 def add_students():
     students = [
         ('FC5204', 'John', 'Doe', '15/05/1995', 'john.doe@university.com'),
@@ -44,5 +45,21 @@ def add_students():
                 email=email,
             )
 
+# Test code
+# add_students()
+# print(Student.objects.all())
 
-print(Student.objects.all())
+
+# Exam: 02. Get Students Info
+def get_students_info():
+    result = []
+
+    for student in Student.objects.all():
+        result.append(
+            f'Student №{student.student_id}: {student.first_name} {student.last_name}; Email: {student.email}'
+        )
+
+    return '\n'.join(result)
+
+# Test code
+# print(get_students_info())
