@@ -45,7 +45,8 @@ def add_students():
                 email=email,
             )
 
-# Test code
+
+# Test Code
 # add_students()
 # print(Student.objects.all())
 
@@ -61,5 +62,26 @@ def get_students_info():
 
     return '\n'.join(result)
 
-# Test code
+
+# Test Code
 # print(get_students_info())
+
+
+# Exam: 03. Update Students' Emails
+def update_students_emails():
+    new_domain = 'uni-students.com'
+
+    def change_domain(email, domain):
+        local_part, _ = email.split('@')
+        new_email = f"{local_part}@{domain}"
+
+        return new_email
+
+    for student in Student.objects.all():
+        student.email = change_domain(student.email, new_domain)
+        student.save()
+
+# Test Code
+# update_students_emails()
+# for student in Student.objects.all():
+#     print(student.email)
