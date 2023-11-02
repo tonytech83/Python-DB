@@ -1,12 +1,12 @@
 import os
 import django
-from django.db.models import QuerySet
+from django.db.models import QuerySet, F
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Pet, Artifact, Location, Car, Task, HotelRoom
+from main_app.models import Pet, Artifact, Location, Car, Task, HotelRoom, Character
 
 
 #
@@ -148,3 +148,73 @@ def delete_last_room() -> None:
 
     if last_room.is_reserved:
         last_room.delete()
+
+
+#
+# Exam: 07. Character
+#
+def update_characters() -> None:
+    Character.objects.filter(class_name='Mage').update(
+        level=F('level') + 3,
+        intelligence=F('intelligence') - 7
+    )
+
+    Character.objects.filter(class_name='Warrior').update(
+        hit_points=F('hit_points') / 2,
+        dexterity=F('dexterity') + 4
+    )
+
+    Character.objects.filter(class_name__in=['Assassin', 'Scout']).update(
+        inventory='The inventory is empty',
+    )
+
+
+def fuse_characters(first_character: Character, second_character: Character) -> None:
+    fusion_name = first_character.name + ' ' + second_character.name
+    fusion_class_name = 'Fusion'
+    fusion_level = int((first_character.level + second_character.level) // 2)
+    fusion_strength = int((first_character.strength + second_character.strength) * 1.2)
+    fusion_dexterity = int((first_character.dexterity + second_character.dexterity) * 1.4)
+    fusion_intelligence = int((first_character.intelligence + second_character.intelligence) * 1.5)
+    fusion_hit_points = first_character.hit_points + second_character.hit_points
+
+    if first_character.class_name in ("Mage", "Scout"):
+        fusion_inventory = 'Bow of the Elven Lords, Amulet of Eternal Wisdom'
+    else:
+        fusion_inventory = 'Dragon Scale Armor, Excalibur'
+
+    Character.objects.create(
+        name=fusion_name,
+        class_name=fusion_class_name,
+        level=fusion_level,
+        strength=fusion_strength,
+        dexterity=fusion_dexterity,
+        intelligence=fusion_intelligence,
+        hit_points=fusion_hit_points,
+        inventory=fusion_inventory,
+    )
+
+    first_character.delete()
+    second_character.delete()
+
+
+def grand_dexterity() -> None:
+    Character.objects.update(
+        dexterity=30,
+    )
+
+
+def grand_intelligence() -> None:
+    Character.objects.update(
+        intelligence=40,
+    )
+
+
+def grand_strength() -> None:
+    Character.objects.update(
+        strength=50,
+    )
+
+
+def delete_characters() -> None:
+    Character.objects.filter(inventory='The inventory is empty').delete()
