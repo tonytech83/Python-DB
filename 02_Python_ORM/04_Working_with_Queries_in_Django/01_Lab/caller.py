@@ -195,3 +195,25 @@ def filter_authors_by_birth_year(start_year: int, end_year: int) -> str:
 # print()
 # print("Authors born between 2000 and 2010:")
 # print(filter_authors_by_birth_year(2000, 2010))
+
+
+#
+# Exam: 07. Change Reviewer's Name
+#
+def change_reviewer_name(reviewer_name: str, new_name: str) -> QuerySet:
+    (Review.objects
+     .filter(reviewer_name=reviewer_name)
+     .update(reviewer_name=new_name))
+
+    return Review.objects.all()
+
+
+# Test Code
+# print("Change Alice Johnson to A.J.:")
+# print(change_reviewer_name("Alice Johnson", "A.J."))
+# print()
+# print("Change Bob Wilson to Bobby W.:")
+# print(change_reviewer_name("Bob Wilson", "Bobby W."))
+# print()
+# print("Change A.J. to A. Johnson:")
+# print(change_reviewer_name("A.J.", "A. Johnson"))
