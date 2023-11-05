@@ -9,7 +9,8 @@ from django.db.models import QuerySet, Avg, Sum, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Author, Book, Artist, Song, Product, Review, Driver, DrivingLicense
+from main_app.models import Author, Book, Artist, Song, Product, Review, Driver, DrivingLicense, Owner, Car, \
+    Registration
 
 
 #
@@ -228,6 +229,40 @@ def get_drivers_with_expired_licenses(due_date) -> List[Driver]:
 # print(expiration_dates)
 
 # # Get drivers with expired licenses
-drivers_with_expired_licenses = get_drivers_with_expired_licenses(date(2023, 1, 1))
-for driver in drivers_with_expired_licenses:
-    print(f"{driver.first_name} {driver.last_name} has to renew their driving license!")
+# drivers_with_expired_licenses = get_drivers_with_expired_licenses(date(2023, 1, 1))
+# for driver in drivers_with_expired_licenses:
+#     print(f"{driver.first_name} {driver.last_name} has to renew their driving license!")
+
+
+#
+# Exam: 05. Car Registration
+#
+def register_car_by_owner(owner: Owner) -> str:
+    registration = Registration.objects.filter(car__isnull=True).first()
+    car = Car.objects.filter(registration__isnull=True, owner=owner).first()
+
+    car.owner = owner
+    car.registration = registration
+    car.save()
+
+    registration.registration_date = date.today()
+    registration.car = car
+    registration.save()
+
+    return (f"Successfully registered {car.model} to {owner.name}"
+            f" with registration number {registration.registration_number}.")
+
+# Test Code
+# # Create instances of the Owner model
+# owner1 = Owner.objects.create(name='Ivelin Milchev')
+# owner2 = Owner.objects.create(name='Alice Smith')
+#
+# # Create instances of the Car model and associate them with owners
+# car1 = Car.objects.create(model='Citroen C5', year=2004)
+# car2 = Car.objects.create(model='Honda Civic', year=2021)
+#
+# # Create instances of the Registration model for the cars
+# registration1 = Registration.objects.create(registration_number='TX0044XA')
+# registration2 = Registration.objects.create(registration_number='XYZ789')
+#
+# print(register_car_by_owner(owner1))
