@@ -1,4 +1,7 @@
 import os
+from datetime import timedelta, date
+from typing import List
+
 import django
 from django.db.models import QuerySet, Avg, Sum, Count
 
@@ -6,7 +9,7 @@ from django.db.models import QuerySet, Avg, Sum, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Author, Book, Artist, Song, Product, Review
+from main_app.models import Author, Book, Artist, Song, Product, Review, Driver, DrivingLicense
 
 
 #
@@ -163,7 +166,8 @@ def get_products_with_no_reviews() -> QuerySet[Product]:
 
 
 def delete_products_without_reviews() -> None:
-    Product.objects.filter(reviews__isnull=True).delete()
+    get_products_with_no_reviews().delete()
+
 
 # Test Code
 # # Create some products
@@ -186,3 +190,44 @@ def delete_products_without_reviews() -> None:
 
 # # Calculate and print the average rating
 # print(calculate_average_rating_for_product_by_name("Laptop"))
+
+
+#
+# Exam: 04. License
+#
+def calculate_licenses_expiration_dates() -> str:
+    driving_licenses = DrivingLicense.objects.order_by('-license_number')
+
+    return '\n'.join(str(license) for license in driving_licenses)
+
+
+def get_drivers_with_expired_licenses(due_date) -> List[Driver]:
+    expiration_cutoff_date = due_date - timedelta(days=365)
+    drivers_expired_licenses = Driver.objects.filter(drivinglicense__issue_date__gt=expiration_cutoff_date)
+
+    # drivers = Driver.objects.all()
+    #
+    # drivers_with_expired_licenses = []
+    # for driver in drivers:
+    #     license_expiration_date = driver.drivinglicense.issue_date + timedelta(days=365)
+    #     if license_expiration_date > due_date:
+    #         drivers_with_expired_licenses.append(driver)
+
+    return drivers_expired_licenses
+
+
+# # Create drivers
+# driver1 = Driver.objects.create(first_name="Tanya", last_name="Petrova")
+# driver2 = Driver.objects.create(first_name="Ivan", last_name="Yordanov")
+# # Create licenses associated with drivers
+# license1 = DrivingLicense.objects.create(license_number="123", issue_date=date(2022, 10, 6), driver=driver1)
+# license2 = DrivingLicense.objects.create(license_number="456", issue_date=date(2022, 1, 1), driver=driver2)
+
+# # Calculate licenses expiration dates
+# expiration_dates = calculate_licenses_expiration_dates()
+# print(expiration_dates)
+
+# # Get drivers with expired licenses
+drivers_with_expired_licenses = get_drivers_with_expired_licenses(date(2023, 1, 1))
+for driver in drivers_with_expired_licenses:
+    print(f"{driver.first_name} {driver.last_name} has to renew their driving license!")
