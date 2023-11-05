@@ -1,12 +1,12 @@
 import os
 import django
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Avg, Sum, Count
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Author, Book, Artist, Song
+from main_app.models import Author, Book, Artist, Song, Product, Review
 
 
 #
@@ -80,7 +80,7 @@ def add_song_to_artist(artist_name: str, song_title: str) -> None:
 def get_songs_by_artist(artist_name: str) -> QuerySet:
     artist = Artist.objects.get(name=artist_name)
 
-    return artist.songs.all()
+    return artist.songs.all().order_by('-id')
 
 
 def remove_song_from_artist(artist_name: str, song_title: str) -> None:
@@ -88,6 +88,9 @@ def remove_song_from_artist(artist_name: str, song_title: str) -> None:
     song = Song.objects.get(title=song_title)
 
     artist.songs.remove(song)
+
+    # One row code
+    # Artist.objects.get(name=artist_name).songs.remove(Song.objects.get(title=song_title))
 
 
 # Test Code
@@ -123,3 +126,63 @@ def remove_song_from_artist(artist_name: str, song_title: str) -> None:
 #
 # for song in songs:
 #     print(f"Songs by Daniel Di Angelo after removal: {song.title}")
+
+#
+# # Exam: 03. Shop
+#
+def calculate_average_rating_for_product_by_name(product_name: str) -> float:
+    product = Product.objects.get(name=product_name)
+    reviews = product.reviews.all()
+
+    total_rating = sum(r.rating for r in reviews)
+    avg_rating = total_rating / reviews.count()
+
+    return avg_rating
+
+    # # result using aggregation and Avg form Django
+    # product = Product.objects.get(name=product_name)
+    # return product.reviews.aggregate(average=Avg('rating'))['average']
+
+    # # result using annotate, Sum and Count form Django
+    # product = Product.objects.annotate(
+    #     total_rating=Sum('reviews__rating'),
+    #     reviews_count=Count('reviews')
+    # ).get(name=product_name)
+    #
+    # avg_rating = product.total_rating / product.reviews_count
+    #
+    # return avg_rating
+
+
+def get_reviews_with_high_ratings(threshold: int) -> QuerySet[Review]:
+    return Review.objects.filter(rating__gte=threshold)
+
+
+def get_products_with_no_reviews() -> QuerySet[Product]:
+    return Product.objects.filter(reviews__isnull=True).order_by('-name')
+
+
+def delete_products_without_reviews() -> None:
+    Product.objects.filter(reviews__isnull=True).delete()
+
+# Test Code
+# # Create some products
+# product1 = Product.objects.create(name="Laptop")
+# product2 = Product.objects.create(name="Smartphone")
+# product3 = Product.objects.create(name="Headphones")
+# product4 = Product.objects.create(name="PlayStation 5")
+#
+# # Create some reviews for products
+# review1 = Review.objects.create(description="Great laptop!", rating=5, product=product1)
+# review2 = Review.objects.create(description="The laptop is slow!", rating=2, product=product1)
+# review3 = Review.objects.create(description="Awesome smartphone!", rating=5, product=product2)
+
+# Run the function to get products without reviews
+# products_without_reviews = get_products_with_no_reviews()
+# print(f"Products without reviews: {', '.join([p.name for p in products_without_reviews])}")
+# # Run the function to delete products without reviews
+# delete_products_without_reviews()
+# print(f"Products left: {Product.objects.count()}")
+
+# # Calculate and print the average rating
+# print(calculate_average_rating_for_product_by_name("Laptop"))
