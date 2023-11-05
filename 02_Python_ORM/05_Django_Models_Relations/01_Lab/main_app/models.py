@@ -77,3 +77,23 @@ class StudentEnrollment(models.Model):
         max_length=1,
         choices=Grade.choices
     )
+
+
+# Exam: 04. The Lecturer Profile
+class LecturerProfile(models.Model):
+    lecturer = models.OneToOneField(
+        to=Lecturer,
+        on_delete=models.CASCADE,
+    )
+    email = models.EmailField(
+        unique=True
+    )
+    bio = models.TextField(
+        null=True,
+        blank=True,
+    )
+    office_location = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+    )
