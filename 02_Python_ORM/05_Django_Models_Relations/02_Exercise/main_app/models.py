@@ -25,4 +25,18 @@ class Book(models.Model):
 
 # Exam: 02. Music App
 class Song(models.Model):
-    pass
+    title = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+
+class Artist(models.Model):
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+    songs = models.ManyToManyField(
+        to=Song,
+        related_name='artists'
+    )

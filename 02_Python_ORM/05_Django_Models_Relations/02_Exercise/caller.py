@@ -1,11 +1,12 @@
 import os
 import django
+from django.db.models import QuerySet
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Author, Book
+from main_app.models import Author, Book, Artist, Song
 
 
 #
@@ -69,3 +70,56 @@ def delete_all_authors_without_books() -> None:
 #
 # Exam: 02. Music App
 #
+def add_song_to_artist(artist_name: str, song_title: str) -> None:
+    artist = Artist.objects.get(name=artist_name)
+    song = Song.objects.get(title=song_title)
+
+    artist.songs.add(song)
+
+
+def get_songs_by_artist(artist_name: str) -> QuerySet:
+    artist = Artist.objects.get(name=artist_name)
+
+    return artist.songs.all()
+
+
+def remove_song_from_artist(artist_name: str, song_title: str) -> None:
+    artist = Artist.objects.get(name=artist_name)
+    song = Song.objects.get(title=song_title)
+
+    artist.songs.remove(song)
+
+
+# Test Code
+# # Create artists
+# artist1 = Artist.objects.create(name="Daniel Di Angelo")
+# artist2 = Artist.objects.create(name="Indila")
+#
+# # Create songs
+# song1 = Song.objects.create(title="Lose Face")
+# song2 = Song.objects.create(title="Tourner Dans Le Vide")
+# song3 = Song.objects.create(title="Loyalty")
+
+# # Add a song to an artist
+# add_song_to_artist("Daniel Di Angelo", "Lose Face")
+# add_song_to_artist("Daniel Di Angelo", "Loyalty")
+# add_song_to_artist("Indila", "Tourner Dans Le Vide")
+
+# # Get all songs by a specific artist
+# songs = get_songs_by_artist("Daniel Di Angelo")
+# for song in songs:
+#     print(f"Daniel Di Angelo: {song.title}")
+
+# # Get all songs by a specific artist
+# songs = get_songs_by_artist("Indila")
+# for song in songs:
+#     print(f"Indila: {song.title}")
+
+# # Remove a song from an artist
+# remove_song_from_artist("Daniel Di Angelo", "Lose Face")
+#
+# # Check if the song is removed
+# songs = get_songs_by_artist("Daniel Di Angelo")
+#
+# for song in songs:
+#     print(f"Songs by Daniel Di Angelo after removal: {song.title}")
