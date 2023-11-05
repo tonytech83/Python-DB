@@ -57,3 +57,14 @@ from main_app.models import Lecturer, Subject, Student
 # physics_students = physics_subject.student_set.all()
 # for student in physics_students:
 #     print(f"{student.first_name} {student.last_name} is enrolled in Physics.")
+
+
+#
+# Exam: 03. The Enrollment
+# Test Code
+#
+# student = Student.objects.get(student_id="S217")
+# student_enrollments = student.studentenrollment_set.all()
+#
+# for enrollment in student_enrollments:
+#     print(f"{student.first_name} {student.last_name} is enrolled in {enrollment.subject}.")

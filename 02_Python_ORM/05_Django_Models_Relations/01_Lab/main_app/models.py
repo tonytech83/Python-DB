@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 
 
@@ -28,6 +30,9 @@ class Subject(models.Model):
         related_name='subjects'
     )
 
+    def __str__(self):
+        return f'{self.name}'
+
 
 # Exam: 02. The Student
 class Student(models.Model):
@@ -45,7 +50,30 @@ class Student(models.Model):
     email = models.EmailField(
         unique=True
     )
-    subjects = models.ManyToManyField(Subject)
+    subjects = models.ManyToManyField(to=Subject, through='StudentEnrollment')
 
 
+# Exam: 03. The Enrollment
+class StudentEnrollment(models.Model):
+    class Grade(models.TextChoices):
+        A = 'A'
+        B = 'B'
+        C = 'C'
+        D = 'D'
+        F = 'F'
 
+    student = models.ForeignKey(
+        to=Student,
+        on_delete=models.CASCADE,
+    )
+    subject = models.ForeignKey(
+        to=Subject,
+        on_delete=models.CASCADE,
+    )
+    enrollment_date = models.DateField(
+        default=date.today
+    )
+    grade = models.CharField(
+        max_length=1,
+        choices=Grade.choices
+    )
