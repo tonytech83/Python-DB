@@ -1,4 +1,6 @@
 import os
+from datetime import date, timedelta
+
 import django
 
 # Set up Django
@@ -91,3 +93,68 @@ from main_app.models import Animal, Mammal, Bird, Reptile, ZooKeeper, Veterinari
 # )
 # zookeeper.full_clean()
 # zookeeper.save()
+
+
+#
+# Exam: Exam: 04. Zookeeper's Specialty
+# Test Code
+#
+# zookeeper = ZooKeeper(first_name="John", last_name="Doe", phone_number="0123456789", specialty="Fishes")
+# zookeeper.full_clean()
+# zookeeper.save()
+
+
+#
+# Exam: 05. Animal Display System Logic
+# Test Code
+#
+# all_animals_info = ZooDisplayAnimal.objects.all()
+# for a in all_animals_info:
+#     print(a.display_info())
+#     print(a.is_endangered())
+
+
+#
+# Exam: 06. Animal's Age
+# Test Code
+#
+# lion_birth_date = date.today() - timedelta(days=731)
+# lion = Mammal.objects.create(
+#     name="Simba",
+#     species="Lion",
+#     birth_date=lion_birth_date,
+#     sound="Roar",
+#     fur_color="Golden"
+# )
+# print(f"The lion's age is {lion.age}.")
+#
+# snake_birth_date = date.today() - timedelta(days=30)
+# snake = Reptile.objects.create(
+#     name="Kaa",
+#     species="Python",
+#     birth_date=snake_birth_date,
+#     sound="Hiss",
+#     scale_type="Scales"
+# )
+# print(f"The snake's age is {snake.age}.")
+
+
+#
+# Exam: 07. Veterinarian Availability
+# Test Code
+#
+# v1 = Veterinarian.objects.create(
+#     first_name="John",
+#     last_name="Doe",
+#     phone_number="0896625120",
+#     license_number="VET123",
+#     availability=False
+# )
+# print(v1.is_available())
+# v2 = Veterinarian.objects.create(
+#     first_name="Alice",
+#     last_name="Johnson",
+#     phone_number="0896529728",
+#     license_number="VET789"
+# )
+# print(v2.is_available())
