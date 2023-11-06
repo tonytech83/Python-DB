@@ -41,6 +41,13 @@ Databases are the standard way of utilizing dynamic information in modern techno
 The course covers the basics of mapping between a relational database and an object-oriented model (ORM) with a focus on the Django framework. It starts with an introduction to ORM and its key concepts before moving on to working with models in Django, including defining models, fields, and methods. Next, the course delves into advanced topics such as migrations and the Django admin interface, query operations, relationships between models, and inheritance. Students will also learn more complex techniques for working with models and using ORM queries in Django. The course also covers another popular Python ORM framework - SQLAlchemy, which offers an alternative approach. Exercises will be provided during the training to help participants solidify their knowledge at each step. By the end of this course, they will acquire foundational skills for building stable, scalable, and efficient web applications driven by databases using Python ORM frameworks.
 </h5>
 
+- [`ORM Introduction`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/00_ORM_Introduction)
+- [`Django Models Basics`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/01_Django_Models_Basics)
+- [`Migrations and Django Admin`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/02_Migrations_and_Django_Admin)
+- [`Data Operations in Django with Queries`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/03_Data_Operations_in_Django_with_Queries)
+- [`Working with Queries in Django`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/04_Working_with_Queries_in_Django)
+- [`Django Models Relations`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/05_Django_Models_Relations)
+
 <br/>
 <br/>
 
