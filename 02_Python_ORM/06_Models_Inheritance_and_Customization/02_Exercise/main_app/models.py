@@ -93,3 +93,18 @@ class Message(models.Model):
             receiver=receiver,
             content=self.content
         )
+
+
+# Exam: 03. Student Information
+class StudentIDField(models.PositiveIntegerField):
+    def to_python(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            # should raise ValidationError
+            pass
+
+
+class Student(models.Model):
+    name = models.CharField(max_length=100, )
+    student_id = StudentIDField()

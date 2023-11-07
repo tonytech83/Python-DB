@@ -5,7 +5,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import BaseCharacter, Mage, Necromancer, UserProfile, Message
+from main_app.models import BaseCharacter, Mage, Necromancer, UserProfile, Message, Student
 
 #
 # Exam: 01. Character Classes
@@ -63,3 +63,27 @@ from main_app.models import BaseCharacter, Mage, Necromancer, UserProfile, Messa
 # # Create a forwarded message from user2 to user3
 # forwarded_message = message1.forward_message(sender=user2, receiver=user3)
 # print(f"Forwarded message from {forwarded_message.sender.username} to {forwarded_message.receiver.username}")
+
+
+#
+# Exam: 03. Student Information
+# Test Code
+#
+# Test cases
+# student1 = Student(name="John", student_id=12345)
+# student1.save()
+#
+# student2 = Student(name="Alice", student_id=45.23)
+# student2.save()
+#
+# student3 = Student(name="Bob", student_id="789")
+# student3.save()
+#
+# # Retrieving student IDs from the database
+# retrieved_student1 = Student.objects.get(name="John")
+# retrieved_student2 = Student.objects.get(name="Alice")
+# retrieved_student3 = Student.objects.get(name="Bob")
+#
+# print(retrieved_student1.student_id)
+# print(retrieved_student2.student_id)
+# print(retrieved_student3.student_id)
