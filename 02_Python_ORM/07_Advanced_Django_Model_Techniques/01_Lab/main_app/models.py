@@ -5,6 +5,20 @@ from django.db import models
 from main_app.validators import validate_menu_categories
 
 
+# Exam: 06. Rating and Review Content
+class ReviewMixin(models.Model):
+    class Meta:
+        abstract = True
+        ordering = ['-rating']
+
+    review_content = models.TextField()
+    rating = models.PositiveIntegerField(
+        validators=[
+            MaxValueValidator(5)
+        ]
+    )
+
+
 # Exam: 01. Restaurant
 class Restaurant(models.Model):
     name = models.CharField(
@@ -45,11 +59,11 @@ class Menu(models.Model):
 
 
 # Exam: 03. Restaurant Review
-class RestaurantReview(models.Model):
-    class Meta:
+class RestaurantReview(ReviewMixin):
+    class Meta(ReviewMixin.Meta):
         # Made RestaurantReview model abstract based on exam 04. Restaurant Review Types
         abstract = True
-        ordering = ['-rating']
+        # ordering = ['-rating']
         verbose_name = 'Restaurant Review'
         verbose_name_plural = 'Restaurant Reviews'
         unique_together = ['reviewer_name', 'restaurant']
@@ -59,10 +73,10 @@ class RestaurantReview(models.Model):
         to=Restaurant,
         on_delete=models.CASCADE,
     )
-    review_content = models.TextField()
-    rating = models.PositiveIntegerField(validators=[
-        MaxValueValidator(5)
-    ])
+    # review_content = models.TextField()
+    # rating = models.PositiveIntegerField(validators=[
+    #     MaxValueValidator(5)
+    # ])
 
 
 # Exam: 04. Restaurant Review Types
@@ -79,9 +93,9 @@ class FoodCriticRestaurantReview(RestaurantReview):
 
 
 # Exam: 05. Menu Review
-class MenuReview(models.Model):
-    class Meta:
-        ordering = ['-rating']
+class MenuReview(ReviewMixin):
+    class Meta(ReviewMixin.Meta):
+        # ordering = ['-rating']
         verbose_name = 'Menu Review'
         verbose_name_plural = 'Menu Reviews'
         unique_together = ['reviewer_name', 'menu']
@@ -95,7 +109,7 @@ class MenuReview(models.Model):
         to=Menu,
         on_delete=models.CASCADE,
     )
-    review_content = models.TextField()
-    rating = models.PositiveIntegerField(validators=[
-        MaxValueValidator(5)
-    ])
+    # review_content = models.TextField()
+    # rating = models.PositiveIntegerField(validators=[
+    #     MaxValueValidator(5)
+    # ])
