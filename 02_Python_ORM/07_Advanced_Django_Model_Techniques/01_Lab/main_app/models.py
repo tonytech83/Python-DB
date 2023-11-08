@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator, MaxLengthValidator
 from django.db import models
 
@@ -26,4 +27,24 @@ class Restaurant(models.Model):
             MinValueValidator(0, message='Rating must be at least 0.00.'),
             MaxValueValidator(5, message='Rating cannot exceed 5.00.')
         ]
+    )
+
+
+# Exam: 02. Menu
+class Menu(models.Model):
+
+    def validate_menu_categories(value):
+        required_categories = ("Appetizers", "Main Course", "Desserts")
+        if not all(c in value for c in required_categories):
+            raise ValidationError(
+                'The menu must include each of the categories "Appetizers", "Main Course", "Desserts".'
+            )
+
+    name = models.CharField(max_length=100, )
+    description = models.TextField(
+        validators=[validate_menu_categories]
+    )
+    restaurant = models.ForeignKey(
+        to=Restaurant,
+        on_delete=models.CASCADE,
     )
