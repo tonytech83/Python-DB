@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MinValueValidator, MaxValueValidator, MaxLengthValidator
 from django.db import models
 
+from main_app.validators import validate_menu_categories
+
 
 # Exam: 01. Restaurant
 class Restaurant(models.Model):
@@ -32,14 +34,6 @@ class Restaurant(models.Model):
 
 # Exam: 02. Menu
 class Menu(models.Model):
-
-    def validate_menu_categories(value):
-        required_categories = ("Appetizers", "Main Course", "Desserts")
-        if not all(c in value for c in required_categories):
-            raise ValidationError(
-                'The menu must include each of the categories "Appetizers", "Main Course", "Desserts".'
-            )
-
     name = models.CharField(max_length=100, )
     description = models.TextField(
         validators=[validate_menu_categories]
@@ -48,3 +42,22 @@ class Menu(models.Model):
         to=Restaurant,
         on_delete=models.CASCADE,
     )
+
+
+# Exam: 03. Restaurant Review
+class RestaurantReview(models.Model):
+    class Meta:
+        ordering = ['-rating']
+        verbose_name = 'Restaurant Review'
+        verbose_name_plural = 'Restaurant Reviews'
+        unique_together = ['reviewer_name', 'restaurant']
+
+    reviewer_name = models.CharField(max_length=100, )
+    restaurant = models.ForeignKey(
+        to=Restaurant,
+        on_delete=models.CASCADE,
+    )
+    review_content = models.TextField()
+    rating = models.PositiveIntegerField(validators=[
+        MaxValueValidator(5)
+    ])
