@@ -47,6 +47,8 @@ class Menu(models.Model):
 # Exam: 03. Restaurant Review
 class RestaurantReview(models.Model):
     class Meta:
+        # Made RestaurantReview model abstract based on exam 04. Restaurant Review Types
+        abstract = True
         ordering = ['-rating']
         verbose_name = 'Restaurant Review'
         verbose_name_plural = 'Restaurant Reviews'
@@ -61,3 +63,16 @@ class RestaurantReview(models.Model):
     rating = models.PositiveIntegerField(validators=[
         MaxValueValidator(5)
     ])
+
+
+# Exam: 04. Restaurant Review Types
+class RegularRestaurantReview(RestaurantReview):
+    pass
+
+
+class FoodCriticRestaurantReview(RestaurantReview):
+    class Meta(RestaurantReview.Meta):
+        verbose_name = 'Food Critic Review'
+        verbose_name_plural = 'Food Critic Reviews'
+
+    food_critic_cuisine_area = models.CharField(max_length=100, )
