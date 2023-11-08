@@ -76,3 +76,26 @@ class FoodCriticRestaurantReview(RestaurantReview):
         verbose_name_plural = 'Food Critic Reviews'
 
     food_critic_cuisine_area = models.CharField(max_length=100, )
+
+
+# Exam: 05. Menu Review
+class MenuReview(models.Model):
+    class Meta:
+        ordering = ['-rating']
+        verbose_name = 'Menu Review'
+        verbose_name_plural = 'Menu Reviews'
+        unique_together = ['reviewer_name', 'menu']
+        indexes = [models.Index(
+            fields=['menu'],
+            name='main_app_menu_review_menu_id'
+        )]
+
+    reviewer_name = models.CharField(max_length=100, )
+    menu = models.ForeignKey(
+        to=Menu,
+        on_delete=models.CASCADE,
+    )
+    review_content = models.TextField()
+    rating = models.PositiveIntegerField(validators=[
+        MaxValueValidator(5)
+    ])
