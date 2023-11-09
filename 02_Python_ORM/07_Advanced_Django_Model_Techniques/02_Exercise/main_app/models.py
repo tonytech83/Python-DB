@@ -137,3 +137,47 @@ class DiscountedProduct(Product):
 
     def calculate_price_without_discount(self):
         return float(self.price) * 1.20
+
+
+# Exam: 04. Superhero Universe
+class RechargeEnergyMixin(models.Model):
+    def recharge_energy(self, amount: int):
+        self.energy = min(self.energy + amount, 100)
+
+        self.save()
+
+
+class Hero(RechargeEnergyMixin, models.Model):
+    name = models.CharField(max_length=100, )
+    hero_title = models.CharField(max_length=100, )
+    energy = models.PositiveIntegerField()
+
+
+class SpiderHero(Hero):
+    class Meta:
+        proxy = True
+
+    def swing_from_buildings(self) -> str:
+        self.energy -= 80
+
+        if self.energy <= 0:
+            return f'{self.name} as Spider Hero is out of web shooter fluid'
+
+        self.save()
+
+        return f'{self.name} as Spider Hero swings from buildings using web shooters'
+
+
+class FlashHero(Hero):
+    class Meta:
+        proxy = True
+
+    def run_at_super_speed(self) -> str:
+        self.energy -= 65
+
+        if self.energy <= 0:
+            return f'{self.name} as Flash Hero needs to recharge the speed force'
+
+        self.save()
+
+        return f'{self.name} as Flash Hero runs at lightning speed, saving the day'
