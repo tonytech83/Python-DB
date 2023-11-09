@@ -1,7 +1,8 @@
 from django.db import models
+from django.core.validators import MinLengthValidator
+from django.contrib.postgres.search import SearchVectorField
 
 from main_app.validators import validate_customer_name, validate_customer_age, validate_customer_phone_number
-from django.core.validators import MinLengthValidator
 
 
 # Exam: 01. Customer
@@ -181,3 +182,15 @@ class FlashHero(Hero):
         self.save()
 
         return f'{self.name} as Flash Hero runs at lightning speed, saving the day'
+
+
+# Exam: 05. *Vector Searching
+class Document(models.Model):
+    class Meta:
+        indexes = [
+            models.Index(fields=['search_vector']),
+        ]
+
+    title = models.CharField(max_length=200, )
+    content = models.TextField()
+    search_vector = SearchVectorField(null=True)
