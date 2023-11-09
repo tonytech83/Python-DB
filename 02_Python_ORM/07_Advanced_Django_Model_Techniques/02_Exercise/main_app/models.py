@@ -89,3 +89,51 @@ class Music(BaseMedia):
             MinLengthValidator(9, 'Artist must be at least 9 characters long')
         ]
     )
+
+
+# Exam: 03. Tax-Inclusive Pricing
+class Product(models.Model):
+    TAX_RATE = 0.08
+    DISCOUNT_TAX_RATE = 0.05
+    MULTIPLIER = 2.00
+    DISCOUNT_MULTIPLIER = 1.50
+
+    name = models.CharField(
+        max_length=100,
+    )
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    def calculate_tax(self):
+        if self.__class__.__name__ == 'Product':
+            tax_rate = Product.TAX_RATE
+        else:
+            tax_rate = Product.DISCOUNT_TAX_RATE
+
+        return float(self.price) * tax_rate
+
+    def calculate_shipping_cost(self, weight):
+        if self.__class__.__name__ == 'Product':
+            multiplier = Product.MULTIPLIER
+        else:
+            multiplier = Product.DISCOUNT_MULTIPLIER
+
+        return float(weight) * multiplier
+
+    def format_product_name(self) -> str:
+        if self.__class__.__name__ == 'Product':
+            product_type = self.__class__.__name__
+        else:
+            product_type = 'Discounted Product'
+
+        return f'{product_type}: {self.name}'
+
+
+class DiscountedProduct(Product):
+    class Meta:
+        proxy = True
+
+    def calculate_price_without_discount(self):
+        return float(self.price) * 1.20
