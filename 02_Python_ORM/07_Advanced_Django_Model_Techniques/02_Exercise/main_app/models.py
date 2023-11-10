@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.contrib.postgres.search import SearchVectorField
 
+from main_app.migrations.mixins import RechargeEnergyMixin
 from main_app.validators import validate_customer_name, validate_customer_age, validate_customer_phone_number
 
 
@@ -43,7 +46,7 @@ class BaseMedia(models.Model):
     title = models.CharField(max_length=100, )
     description = models.TextField()
     genre = models.CharField(max_length=50, )
-    created_at = models.DateTimeField(auto_now=True, )
+    created_at = models.DateTimeField(auto_now_add=True, )
 
 
 class Book(BaseMedia):
@@ -59,10 +62,10 @@ class Book(BaseMedia):
     )
     isbn = models.CharField(
         max_length=20,
+        unique=True,
         validators=[
             MinLengthValidator(6, 'ISBN must be at least 6 characters long')
         ],
-        unique=True,
     )
 
 
@@ -94,10 +97,10 @@ class Music(BaseMedia):
 
 # Exam: 03. Tax-Inclusive Pricing
 class Product(models.Model):
-    TAX_RATE = 0.08
-    DISCOUNT_TAX_RATE = 0.05
-    MULTIPLIER = 2.00
-    DISCOUNT_MULTIPLIER = 1.50
+    TAX_RATE = Decimal(0.08)
+    DISCOUNT_TAX_RATE = Decimal(0.05)
+    MULTIPLIER = Decimal(2.00)
+    DISCOUNT_MULTIPLIER = Decimal(1.50)
 
     name = models.CharField(
         max_length=100,
@@ -107,21 +110,21 @@ class Product(models.Model):
         decimal_places=2,
     )
 
-    def calculate_tax(self):
+    def calculate_tax(self) -> Decimal:
         if self.__class__.__name__ == 'Product':
             tax_rate = Product.TAX_RATE
         else:
             tax_rate = Product.DISCOUNT_TAX_RATE
 
-        return float(self.price) * tax_rate
+        return self.price * tax_rate
 
-    def calculate_shipping_cost(self, weight):
+    def calculate_shipping_cost(self, weight: Decimal) -> Decimal:
         if self.__class__.__name__ == 'Product':
             multiplier = Product.MULTIPLIER
         else:
             multiplier = Product.DISCOUNT_MULTIPLIER
 
-        return float(weight) * multiplier
+        return weight * multiplier
 
     def format_product_name(self) -> str:
         if self.__class__.__name__ == 'Product':
@@ -133,22 +136,17 @@ class Product(models.Model):
 
 
 class DiscountedProduct(Product):
+    MARKUP = Decimal(1.20)
+
     class Meta:
         proxy = True
 
-    def calculate_price_without_discount(self):
-        return float(self.price) * 1.20
+    def calculate_price_without_discount(self) -> Decimal:
+        return self.price * DiscountedProduct.MARKUP
 
 
 # Exam: 04. Superhero Universe
-class RechargeEnergyMixin(models.Model):
-    def recharge_energy(self, amount: int):
-        self.energy = min(self.energy + amount, 100)
-
-        self.save()
-
-
-class Hero(RechargeEnergyMixin, models.Model):
+class Hero(models.Model, RechargeEnergyMixin):
     name = models.CharField(max_length=100, )
     hero_title = models.CharField(max_length=100, )
     energy = models.PositiveIntegerField()
