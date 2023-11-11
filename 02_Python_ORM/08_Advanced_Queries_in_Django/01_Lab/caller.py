@@ -110,4 +110,25 @@ def product_quantity_ordered():
 
 
 # Test Code
-print(product_quantity_ordered())
+# print(product_quantity_ordered())
+
+
+#
+# Exam: 03. Ordered Products Per Customer
+#
+def ordered_products_per_customer():
+    order_by_customer = (Order.objects
+                         .prefetch_related('orderproduct_set__product__category')
+                         .order_by('id'))
+
+    result = []
+    for order in order_by_customer:
+        result.append(f'Order ID: {order.id}, Customer: {order.customer.username}')
+
+        for order_product in order.orderproduct_set.all():
+            result.append(f'- Product: {order_product.product.name}, Category: {order_product.product.category.name}')
+
+    return '\n'.join(result)
+
+# Test Code
+# print(ordered_products_per_customer())
