@@ -1,6 +1,6 @@
 import os
 import django
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, F
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -152,3 +152,24 @@ def filter_products():
 
 # Test Code
 # print(filter_products())
+
+
+#
+# Exam: 05. Give Discounts
+#
+def give_discount():
+    (Product.objects
+     .available_products()
+     .filter(price__gt=3.00)
+     .update(price=F('price') * 0.7))
+
+    products_after_discount = Product.objects.available_products().order_by('-price', 'name')
+    result = []
+    for product in products_after_discount:
+        result.append(f'{product.name}: {product.price}lv.')
+
+    return '\n'.join(result)
+
+
+# Test Code
+print(give_discount())
