@@ -1,6 +1,6 @@
 import os
 import django
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -130,5 +130,25 @@ def ordered_products_per_customer():
 
     return '\n'.join(result)
 
+
 # Test Code
 # print(ordered_products_per_customer())
+
+#
+# Exam: 04. Available Products Prices
+#
+def filter_products():
+    query = Q(is_available=True) & Q(price__gt=3.00)
+    products = Product.objects.filter(query).order_by('-price', 'name')
+    # products = Product.objects.filter(is_available=True, price__gt=3.00)
+    # products = Product.objects.available_products().filter(price__gt=3.00)
+
+    result = []
+    for product in products:
+        result.append(f'{product.name}: {product.price}lv.')
+
+    return '\n'.join(result)
+
+
+# Test Code
+# print(filter_products())
