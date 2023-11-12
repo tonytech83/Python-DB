@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import QuerySet
 
 from main_app.managers import RealEstateListingManager, VideoGameManager
 from main_app.validations import validate_rating, validate_release_year
@@ -30,9 +31,7 @@ class VideoGame(models.Model):
         ('Strategy', 'Strategy'),
     ]
 
-    title = models.CharField(
-        max_length=100,
-    )
+    title = models.CharField(max_length=100, )
     genre = models.CharField(
         max_length=100,
         choices=GENRE_CHOICES
@@ -59,6 +58,22 @@ class BillingInfo(models.Model):
 class Invoice(models.Model):
     invoice_number = models.CharField(max_length=20, unique=True)
     billing_info = models.OneToOneField(BillingInfo, on_delete=models.CASCADE)
+
+    @staticmethod
+    def get_invoices_with_prefix(prefix: str) -> QuerySet:
+        return (Invoice.objects
+                .filter(invoice_number__contains=prefix)
+                .select_related('billing_info'))
+
+    @staticmethod
+    def get_invoices_sorted_by_number() -> QuerySet:
+        return Invoice.objects.order_by('invoice_number')
+
+    @staticmethod
+    def get_invoice_with_billing_info(invoice_number: str) -> object:
+        return (Invoice.objects
+        .filter(invoice_number=invoice_number)
+        .select_related('billing_info')[0])
 
 
 class Technology(models.Model):
