@@ -1,6 +1,7 @@
 from django.db import models
 
-from main_app.managers import RealEstateListingManager
+from main_app.managers import RealEstateListingManager, VideoGameManager
+from main_app.validations import validate_rating, validate_release_year
 
 
 class RealEstateListing(models.Model):
@@ -29,10 +30,23 @@ class VideoGame(models.Model):
         ('Strategy', 'Strategy'),
     ]
 
-    title = models.CharField(max_length=100)
-    genre = models.CharField(max_length=100, choices=GENRE_CHOICES)
-    release_year = models.PositiveIntegerField()
-    rating = models.DecimalField(max_digits=2, decimal_places=1)
+    title = models.CharField(
+        max_length=100,
+    )
+    genre = models.CharField(
+        max_length=100,
+        choices=GENRE_CHOICES
+    )
+    release_year = models.PositiveIntegerField(
+        validators=[validate_release_year]
+    )
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        validators=[validate_rating],
+    )
+
+    objects = VideoGameManager()
 
     def __str__(self):
         return self.title

@@ -1,7 +1,7 @@
 from typing import List
 
 from django.db import models
-from django.db.models import QuerySet, Count
+from django.db.models import QuerySet, Count, Max, Min, Avg
 from decimal import Decimal
 
 
@@ -25,3 +25,22 @@ class RealEstateListingManager(models.Manager):
             result.append({'location': location.location})
 
         return result
+
+
+# Exam: 02. Video Games Library
+class VideoGameManager(models.Manager):
+
+    def games_by_genre(self, genre: str) -> QuerySet:
+        return self.filter(genre=genre)
+
+    def recently_released_games(self, year: int) -> QuerySet:
+        return self.filter(release_year__gte=year)
+
+    def highest_rated_game(self):
+        return self.filter(rating=self.aggregate(Max('rating'))['rating__max']).first()
+
+    def lowest_rated_game(self):
+        return self.filter(rating=self.aggregate(Min('rating'))['rating__min']).first()
+
+    def average_rating(self):
+        return round(self.aggregate(avg_rating=Avg('rating'))['avg_rating'], 1)
