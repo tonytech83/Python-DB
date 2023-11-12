@@ -1,5 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q, F
 
 from main_app.managers import RealEstateListingManager, VideoGameManager
 from main_app.validations import validate_rating, validate_release_year
@@ -113,6 +115,31 @@ class Task(models.Model):
     is_completed = models.BooleanField(default=False)
     creation_date = models.DateField()
     completion_date = models.DateField()
+
+    # Exam: 05. Taskify
+    @classmethod
+    def overdue_high_priority_tasks(cls) -> QuerySet:
+        query = Q(priority='High') & Q(is_completed=False) & Q(completion_date__gt=F('creation_date'))
+
+        return cls.objects.filter(query)
+
+    @classmethod
+    def completed_mid_priority_tasks(cls) -> QuerySet:
+        query = Q(priority='Medium') & Q(is_completed=True)
+
+        return cls.objects.filter(query)
+
+    @classmethod
+    def search_tasks(cls, query: str) -> QuerySet:
+        search_query = Q(title__contains=query) | Q(description__contains=query)
+
+        return cls.objects.filter(search_query)
+
+    @classmethod
+    def recent_completed_tasks(cls, days: int) -> QuerySet:
+        query = Q(is_completed=True) & Q(completion_date__gte=(F('creation_date')) - timedelta(days=days))
+
+        return cls.objects.filter(query)
 
 
 class Exercise(models.Model):
