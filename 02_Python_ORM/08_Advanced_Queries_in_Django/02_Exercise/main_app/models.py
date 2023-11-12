@@ -137,7 +137,7 @@ class Task(models.Model):
 
     @classmethod
     def recent_completed_tasks(cls, days: int) -> QuerySet:
-        query = Q(is_completed=True) & Q(completion_date__gte=(F('creation_date')) - timedelta(days=days))
+        query = Q(is_completed=True) & Q(completion_date__gte=(F('creation_date')) - days)
 
         return cls.objects.filter(query)
 
@@ -148,3 +148,26 @@ class Exercise(models.Model):
     difficulty_level = models.PositiveIntegerField()
     duration_minutes = models.PositiveIntegerField()
     repetitions = models.PositiveIntegerField()
+
+    # Exam: 06. Gym Session
+    @classmethod
+    def get_long_and_hard_exercises(cls) -> QuerySet:
+        query = Q(duration_minutes__gt=30) & Q(difficulty_level__gte=10)
+
+        return cls.objects.filter(query)
+
+    @classmethod
+    def get_short_and_easy_exercises(cls) -> QuerySet:
+        queue = Q(duration_minutes__lt=15) & Q(difficulty_level__lt=5)
+
+        return cls.objects.filter(queue)
+
+    @classmethod
+    def get_exercises_within_duration(cls, min_duration: int, max_duration: int) -> QuerySet:
+        return cls.objects.filter(duration_minutes__range=(min_duration, max_duration))
+
+    @classmethod
+    def get_exercises_with_difficulty_and_repetitions(cls, min_difficulty: int, min_repetitions: int) -> QuerySet:
+        query = Q(difficulty_level__gte=min_difficulty) & Q(repetitions__gte=min_repetitions)
+
+        return cls.objects.filter(query)
