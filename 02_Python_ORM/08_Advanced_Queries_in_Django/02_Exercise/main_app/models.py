@@ -59,6 +59,7 @@ class Invoice(models.Model):
     invoice_number = models.CharField(max_length=20, unique=True)
     billing_info = models.OneToOneField(BillingInfo, on_delete=models.CASCADE)
 
+    # Exam: 03. Shopaholic Haven
     @classmethod
     def get_invoices_with_prefix(cls, prefix: str) -> QuerySet:
         return (cls.objects
@@ -72,8 +73,8 @@ class Invoice(models.Model):
     @classmethod
     def get_invoice_with_billing_info(cls, invoice_number: str) -> object:
         return (cls.objects
-                .filter(invoice_number=invoice_number)
-                .select_related('billing_info')[0])
+        .filter(invoice_number=invoice_number)
+        .select_related('billing_info')[0])
 
 
 class Technology(models.Model):
@@ -86,10 +87,17 @@ class Project(models.Model):
     description = models.TextField()
     technologies_used = models.ManyToManyField(Technology, related_name='projects')
 
+    # Exam: 04. IT Sector
+    def get_programmers_with_technologies(self) -> QuerySet:
+        return Programmer.objects.filter(projects=self).prefetch_related('projects__technologies_used')
+
 
 class Programmer(models.Model):
     name = models.CharField(max_length=100)
     projects = models.ManyToManyField(Project, related_name='programmers')
+
+    def get_projects_with_technologies(self) -> QuerySet:
+        return Project.objects.filter(programmers=self).prefetch_related('programmers__projects__technologies_used')
 
 
 class Task(models.Model):
