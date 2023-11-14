@@ -65,18 +65,20 @@ class Invoice(models.Model):
     @classmethod
     def get_invoices_with_prefix(cls, prefix: str) -> QuerySet:
         return (cls.objects
-                .filter(invoice_number__contains=prefix)
-                .select_related('billing_info'))
+                .select_related('billing_info')
+                .filter(invoice_number__contains=prefix))
 
     @classmethod
     def get_invoices_sorted_by_number(cls) -> QuerySet:
-        return cls.objects.order_by('invoice_number')
+        return (cls.objects
+                .select_related('billing_info')
+                .order_by('invoice_number'))
 
     @classmethod
     def get_invoice_with_billing_info(cls, invoice_number: str) -> object:
         return (cls.objects
-        .filter(invoice_number=invoice_number)
-        .select_related('billing_info')[0])
+                .select_related('billing_info')
+                .get(invoice_number=invoice_number))
 
 
 class Technology(models.Model):
@@ -91,15 +93,24 @@ class Project(models.Model):
 
     # Exam: 04. IT Sector
     def get_programmers_with_technologies(self) -> QuerySet:
-        return Programmer.objects.filter(projects=self).prefetch_related('projects__technologies_used')
+        return self.programmers.prefetch_related('projects__technologies_used')
+
+        # return (Programmer.objects
+        #         .prefetch_related('projects__technologies_used')
+        #         .filter(projects=self))
 
 
 class Programmer(models.Model):
     name = models.CharField(max_length=100)
     projects = models.ManyToManyField(Project, related_name='programmers')
 
+    # Exam: 04. IT Sector
     def get_projects_with_technologies(self) -> QuerySet:
-        return Project.objects.filter(programmers=self).prefetch_related('programmers__projects__technologies_used')
+        return self.projects.prefetch_related('technologies_used')
+
+        # return (Project.objects
+        #         .prefetch_related('programmers__projects__technologies_used')
+        #         .filter(programmers=self))
 
 
 class Task(models.Model):
@@ -131,15 +142,14 @@ class Task(models.Model):
 
     @classmethod
     def search_tasks(cls, query: str) -> QuerySet:
-        search_query = Q(title__contains=query) | Q(description__contains=query)
+        search_query = Q(title__icontains=query) | Q(description__icontains=query)
 
         return cls.objects.filter(search_query)
 
-    @classmethod
-    def recent_completed_tasks(cls, days: int) -> QuerySet:
-        query = Q(is_completed=True) & Q(completion_date__gte=(F('creation_date')) - days)
+    def recent_completed_tasks(self, days: int) -> QuerySet:
+        query = Q(is_completed=True) & Q(completion_date__gte=self.creation_date - timedelta(days))
 
-        return cls.objects.filter(query)
+        return Task.objects.filter(query)
 
 
 class Exercise(models.Model):

@@ -1,5 +1,3 @@
-from typing import List
-
 from django.db import models
 from django.db.models import QuerySet, Count, Max, Min, Avg
 from decimal import Decimal
@@ -17,14 +15,11 @@ class RealEstateListingManager(models.Manager):
     def with_bedrooms(self, bedrooms_count: int) -> QuerySet:
         return self.filter(bedrooms=bedrooms_count)
 
-    def popular_locations(self) -> List:
-        most_visited_locations = (self.annotate(visits=Count('location')).order_by('-visits', 'id')[:2])
-
-        result = []
-        for location in most_visited_locations:
-            result.append({'location': location.location})
-
-        return result
+    def popular_locations(self) -> QuerySet:
+        return (self
+                .values('location')
+                .annotate(location_count=Count('location'))
+                .order_by('-location_count', 'id')[:2])
 
 
 # Exam: 02. Video Games Library
@@ -36,11 +31,19 @@ class VideoGameManager(models.Manager):
     def recently_released_games(self, year: int) -> QuerySet:
         return self.filter(release_year__gte=year)
 
-    def highest_rated_game(self):
-        return self.filter(rating=self.aggregate(Max('rating'))['rating__max']).first()
+    def highest_rated_game(self) -> QuerySet:
+        # two queries with aggregation
+        # return self.filter(rating=self.aggregate(Max('rating'))['rating__max']).first()
 
-    def lowest_rated_game(self):
-        return self.filter(rating=self.aggregate(Min('rating'))['rating__min']).first()
+        # one query with annotation
+        return self.annotate(max_rating=Max('rating')).order_by('-max_rating').first()
+
+    def lowest_rated_game(self) -> QuerySet:
+        # two queries with aggregation
+        # return self.filter(rating=self.aggregate(Min('rating'))['rating__min']).first()
+
+        # one query with annotation
+        return self.annotate(min_rating=Max('rating')).order_by('min_rating').first()
 
     def average_rating(self):
         return round(self.aggregate(avg_rating=Avg('rating'))['avg_rating'], 1)
