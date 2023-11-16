@@ -47,6 +47,10 @@ The course covers the basics of mapping between a relational database and an obj
 - [`Data Operations in Django with Queries`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/03_Data_Operations_in_Django_with_Queries)
 - [`Working with Queries in Django`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/04_Working_with_Queries_in_Django)
 - [`Django Models Relations`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/05_Django_Models_Relations)
+- [`Models Inheritance and Customization`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/06_Models_Inheritance_and_Customization)
+- [`Advanced Django Model Techniques`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/07_Advanced_Django_Model_Techniques)
+- [`Advanced Queries in Django`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/08_Advanced_Queries_in_Django)
+- [`SQLAlchemy`](https://github.com/tonytech83/Python-DB/tree/main/02_Python_ORM/09_SQLAlchemy)
 
 <br/>
 <br/>
