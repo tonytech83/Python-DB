@@ -25,4 +25,4 @@ class Order(Base):
 
 
 # Create tables in the database (no migrations management)
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)

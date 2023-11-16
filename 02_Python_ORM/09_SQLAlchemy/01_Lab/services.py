@@ -56,21 +56,6 @@ with Session() as session:
     session.commit()
     print('All users added successfully')
 
-# Tansactions
-with Session() as session:
-    try:
-        session.begin()
-        session.query(User).delete()
-        session.commit()
-        print("All users deleted successfully")
-
-    except Exception as err:
-        session.rollback()
-        print('An error occurred:', str(err))
-
-    finally:
-        session.close()
-
 # Populate Order Table
 with Session() as session:
     session.add_all((Order(user_id=7), Order(user_id=9)))
@@ -86,4 +71,3 @@ with Session() as session:
         for order in orders:
             user = order.user
             print(f'Order number {order.id}, Is completed: {order.is_completed}, Username: {user.username}')
-

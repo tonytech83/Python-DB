@@ -6,9 +6,12 @@ from sqlalchemy import pool
 from alembic import context
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 config = context.config
-config.set_main_option('sqlalchemy.url', os.environ.get('DATABASE_URL'))
+config.set_main_option("DATABASE_URL", os.environ["DATABASE_URL"])
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
