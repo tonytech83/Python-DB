@@ -10,10 +10,15 @@ In the "Python DB" module, knowledge about PostgreSQL and popular ORM (Object-Re
 
 <br/>
 
-## Language
+## Languages
 
 - `SQL`
 - `Python`
+
+## Frameworks
+
+- `Django`
+- `SQLAlchemy`
 
 ## Judge System
 
