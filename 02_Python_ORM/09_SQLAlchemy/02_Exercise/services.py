@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from helpers import session_decorator
 from models import Recipe, Chef
 
 from decouple import config
@@ -9,6 +10,8 @@ DATABASE_URL = config('DATABASE_URL')
 engine = create_engine(DATABASE_URL)
 
 Session = sessionmaker(bind=engine)
+
+session = Session()
 
 #
 # Exam: 02.	Create Recipe
@@ -22,47 +25,45 @@ data = (
 )
 
 
+@session_decorator(session)
 def create_recipe(name: str, ingredients: str, instructions: str):
-    with Session() as session:
-        new_recipe = Recipe(
-            name=name,
-            ingredients=ingredients,
-            instructions=instructions
-        )
+    new_recipe = Recipe(
+        name=name,
+        ingredients=ingredients,
+        instructions=instructions
+    )
 
-        session.add(new_recipe)
-        session.commit()
-
-        session.close()
+    session.add(new_recipe)
 
 
 for recipe_data in data:
     name, ingredients, instructions = recipe_data
     create_recipe(name, ingredients, instructions)
 
-with Session() as session:
-    # Query all recipes
-    recipes = session.query(Recipe).all()
+# Query all recipes
+recipes = session.query(Recipe).all()
 
-    # Loop through each recipe and print its details
-    for recipe in recipes:
-        print(f"Recipe name: {recipe.name}")
-
-    session.close()
+# Loop through each recipe and print its details
+for recipe in recipes:
+    print(f"Recipe name: {recipe.name}")
 
 
 #
 # Exam: 03.	Update Recipe
 #
+@session_decorator(session)
 def update_recipe_by_name(name: str, new_name: str, new_ingredients: str, new_instructions: str):
-    with Session() as session:
-        recipe_to_update = session.query(Recipe).filter_by(name=name).first()
+    changed_records: int = (
+        session.query(Recipe)
+        .filter_by(name=name)
+        .update({
+            Recipe.name: new_name,
+            Recipe.ingredients: new_ingredients,
+            Recipe.instructions: new_instructions
+        })
+    )
 
-        if recipe_to_update:
-            recipe_to_update.name = new_name
-            recipe_to_update.ingredients = new_ingredients
-            recipe_to_update.instructions = new_instructions
-            session.commit()
+    return changed_records
 
 
 # Update a recipe by name
@@ -73,56 +74,57 @@ update_recipe_by_name(
     new_instructions="Cook the pasta, mix with eggs, guanciale, and cheese"
 )
 
-with Session() as session:
-    # Query the updated recipe
-    updated_recipe = session.query(Recipe).filter_by(name="Carbonara Pasta").first()
+# Query the updated recipe
+updated_recipe = session.query(Recipe).filter_by(name="Carbonara Pasta").first()
 
-    # Print the updated recipe details
-    print("Updated Recipe Details:")
-    print(f"Name: {updated_recipe.name}")
-    print(f"Ingredients: {updated_recipe.ingredients}")
-    print(f"Instructions: {updated_recipe.instructions}")
+# Print the updated recipe details
+print("Updated Recipe Details:")
+print(f"Name: {updated_recipe.name}")
+print(f"Ingredients: {updated_recipe.ingredients}")
+print(f"Instructions: {updated_recipe.instructions}")
 
 
 #
 # Exam: 04.	Delete Recipe
 #
+@session_decorator(session)
 def delete_recipe_by_name(name: str):
-    with Session() as session:
-        recipe_to_delete = session.query(Recipe).filter_by(name=name).first()
+    changed_records: int = (
+        session.query(Recipe)
+        .filter_by(name=name)
+        .delete()
+    )
 
-        if recipe_to_delete:
-            session.delete(recipe_to_delete)
-            session.commit()
+    return changed_records
 
 
 # Delete a recipe by name
 delete_recipe_by_name("Carbonara Pasta")
 
-with Session() as session:
-    # Query all recipes
-    recipes = session.query(Recipe).all()
+# Query all recipes
+recipes = session.query(Recipe).all()
 
-    # Loop through each recipe and print its details
-    for recipe in recipes:
-        print(f"Recipe name: {recipe.name}")
+# Loop through each recipe and print its details
+for recipe in recipes:
+    print(f"Recipe name: {recipe.name}")
 
 
 #
 # Exam: 05.	Filter Recipes
 #
+
 def get_recipes_by_ingredient(ingredient_name: str):
     with Session() as session:
-        findings = session.query(Recipe).filter(Recipe.name.like(f'%{ingredient_name}%')).all()
+        return (
+            session.query(Recipe)
+            .filter(Recipe.ingredients.ilike(f'%{ingredient_name}%'))
+            .all()
+        )
 
-        if findings:
-            return findings
 
-
-with Session() as session:
-    # Delete all objects (recipes) from the database
-    session.query(Recipe).delete()
-    session.commit()
+# Delete all objects (recipes) from the database
+session.query(Recipe).delete()
+session.commit()
 
 # Create three Recipe instances with two of them sharing the same ingredient
 recipe1 = create_recipe(
@@ -155,25 +157,22 @@ for recipe in filtered_recipes:
 #
 # Exam: 06.	Recipe Ingredients Swap Transaction
 #
+@session_decorator(session)
 def swap_recipe_ingredients_by_name(first_recipe_name: str, second_recipe_name: str):
-    session = Session()
+    first_recipe = (
+        session.query(Recipe)
+        .filter_by(name=first_recipe_name)
+        .with_for_update()  # lock the record in DB, not to be modified from other
+        .one()  # want one record if more raise error
+    )
+    second_recipe = (
+        session.query(Recipe)
+        .filter_by(name=second_recipe_name)
+        .with_for_update()
+        .one()
+    )
 
-    try:
-        session.begin()
-
-        first_recipe = session.query(Recipe).filter_by(name=first_recipe_name).first()
-        second_recipe = session.query(Recipe).filter_by(name=second_recipe_name).first()
-
-        first_recipe.ingredients, second_recipe.ingredients = second_recipe.ingredients, first_recipe.ingredients
-
-        session.commit()
-
-    except Exception as err:
-        session.rollback()
-        print('An error occurred:', str(err))
-
-    finally:
-        session.close()
+    first_recipe.ingredients, second_recipe.ingredients = second_recipe.ingredients, first_recipe.ingredients
 
 
 # Delete all objects (recipes) from the database
@@ -195,21 +194,28 @@ recipe2 = session.query(Recipe).filter_by(name="Waffles").first()
 print(f"Pancakes ingredients {recipe1.ingredients}")
 print(f"Waffles ingredients {recipe2.ingredients}")
 
+
 #
 # Exam: 09.	Recipe and Chef Relations
 #
-session = Session()
-
-
+@session_decorator(session)
 def relate_recipe_with_chef_by_name(recipe_name: str, chef_name: str):
-    recipe = session.query(Recipe).filter_by(name=recipe_name).first()
-    chef = session.query(Chef).filter_by(name=chef_name).first()
+    recipe = (
+        session.query(Recipe)
+        .filter_by(name=recipe_name)
+        .first()
+    )
 
-    if recipe.chef:
+    if recipe and recipe.chef:
         raise Exception(f'Recipe: {recipe_name} already has a related chef')
 
+    chef = (
+        session.query(Chef)
+        .filter_by(name=chef_name)
+        .first()
+    )
+
     recipe.chef = chef
-    session.commit()
 
     return f'Related recipe {recipe_name} with chef {chef_name}'
 
@@ -238,22 +244,23 @@ session.commit()
 print(relate_recipe_with_chef_by_name("Musaka", "Ivan Zvezdev"))
 print(relate_recipe_with_chef_by_name("Musaka", "Chef Uti"))
 
+
 #
 # Exam: 10. Chef and Recipe Integration
 #
-session = Session()
 
-
+@session_decorator(session)
 def get_recipes_with_chef():
-    recipes = session.query(Recipe).all()
+    recipes_with_chef = (
+        session.query(Recipe.name, Chef.name.label('chef_name'))
+        .join(Chef, Recipe.chef)
+        .all()
+    )
 
-    result = []
-    for recipe in recipes:
-        result.append(
-            f'Recipe: {recipe.name} made by chef: {recipe.chef.name}'
-        )
-
-    return '\n'.join(result)
+    return '\n'.join(
+        f'Recipe: {recipe_name} made by chef: {chef_name}'
+        for recipe_name, chef_name in recipes_with_chef
+    )
 
 
 # Delete all objects (recipes and chefs) from the database
