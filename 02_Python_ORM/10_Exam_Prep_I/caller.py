@@ -126,6 +126,8 @@ def get_actors_by_movies_count() -> str:
 
 def get_top_rated_awarded_movie() -> str:
     movie = (Movie.objects
+             .select_related('starring_actor')
+             .prefetch_related('actor')
              .filter(is_awarded=True)
              .order_by('-rating', 'title')
              .first())
