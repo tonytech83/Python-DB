@@ -124,34 +124,35 @@ def get_last_sold_products() -> str:
 
 
 def get_top_products() -> str:
-    products = (Product.objects
-                .annotate(sell_count=Count('products_orders'))
-                .order_by('-sell_count', 'name')[:5])
+    top_products = (Product.objects
+                    .annotate(orders_count=Count('products_orders'))
+                    .filter(orders_count__gt=0)
+                    .order_by('-orders_count', 'name')[:5])
 
-    if not products or not Order.objects.all():
+    if not top_products:
         return ''
 
-    print('Top products:')
-    return '\n'.join(
-        f'{p.name}, sold {p.sell_count} times'
-        for p in products
-    )
+    products_rows = [f'{p.name}, sold {p.orders_count} times' for p in top_products]
+
+    return 'Top products:\n' + '\n'.join(products_rows)
 
 
 def apply_discounts() -> str:
-    orders = (Order.objects
-              .annotate(sell_count=Count('products'))
-              .filter(is_completed=False, sell_count__gte=2))
-
-    updated_orders = orders.update(total_price=F('total_price') * 0.9)
+    updated_orders = (Order.objects
+                      .annotate(sell_count=Count('products'))
+                      .filter(is_completed=False, sell_count__gt=2)
+                      .update(total_price=F('total_price') * 0.9))
 
     return f'Discount applied to {updated_orders} orders.'
 
 
 def complete_order() -> str:
-    order = Order.objects.filter(is_completed=False).first()
+    order = (Order.objects
+             .prefetch_related('products')
+             .filter(is_completed=False)
+             .first())
 
-    if not order or not Order.objects.filter(is_completed=False):
+    if order is None:
         return ''
 
     Order.objects.filter(pk=order.pk).update(is_completed=True)
@@ -160,6 +161,7 @@ def complete_order() -> str:
 
     return "Order has been completed!"
 
-# print(get_top_products())
+
+print(get_top_products())
 # print(apply_discounts())
 # print(complete_order())
