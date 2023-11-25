@@ -1,0 +1,19 @@
+{% extends 'common/base.html' %}
+{% block content %}
+
+    <!-- Add Category Form -->
+    <section id="create">
+        <div class="form">
+            <h2>Add Category</h2>
+            <form class="create-form" method="POST">
+                {% csrf_token %}
+
+                <!--  loads Django form 'CategoryCreateForm' -->
+                {{ form.as_div }}
+
+                <button type="submit">Add Category</button>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

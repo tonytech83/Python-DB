@@ -1,0 +1,31 @@
+{% extends 'common/base.html' %}
+{% block content %}
+
+    <!-- Fruit Details -->
+    <section id="details">
+        <div id="details-wrapper">
+            <!-- fruit image -->
+            <img id="details-img" src="{{ fruit.Image_url }}" alt="fruit{{ fruit.pk }}"/>
+            <!-- fruit name -->
+            <p id="details-title">Name: {{ fruit.name }}</p>
+            <div id="info-wrapper">
+                <div id="details-description">
+                    <p id="category">Category: {{ fruit.category }}</p>
+                    <!-- fruit description -->
+                    <p> Description: {{ fruit.description }}</p>
+                    <!-- fruit nutrition -->
+                    <p id="nutrition">Nutrition</p>
+                    <!-- fruit nutrition details -->
+                    <p id="details-nutrition">{{ fruit.nutrition }}</p>
+                </div>
+
+                <!--Edit and Delete buttons -->
+                <div id="action-buttons">
+                    <a href="{% url 'edit-fruit' fruit.id %}" id="edit-btn">Edit</a>
+                    <a href="{% url 'delete-fruit' fruit.id %}" id="delete-btn">Delete</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
