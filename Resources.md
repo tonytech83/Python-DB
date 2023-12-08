@@ -236,13 +236,13 @@ class Migration(migrations.Migration):
 
 - Object Manager - default Objects
 - Methods:
-  - `all()`
-  - `first()`
-  - `get(**kwargs)`
+  - `all()` - returns all objects in QuerySet
+  - `first()` - returns first object
+  - `get(**kwargs)` - get instance by `**kwargs`
   - `create(**kwargs)`
-  - `filter(**kwargs)`
-  - `order_by(*fields)`
-  - `delete()`
+  - `filter(**kwargs)` - filter QuerySet by `**kwarks`
+  - `order_by(*fields)` - order QuerySet by `*fields`
+  - `delete()` - delete
 
 ### 5. Django Shell and SQL Logging
 
@@ -366,7 +366,7 @@ Django Models Relations
 - Obtained using ForeignKey fields
 - `related_name` - we can make a reverse link
 
-  - By default it is the name + \_set
+  - By default it is the name + `_set`
 
 - Example:
 
@@ -598,7 +598,7 @@ Django Models Relations
             db_table = 'custom_sample_model_table'
 
             # Default ordering (ascending by name)
-            ordering = ['name'] - Случва се на SELECT, не на INSERT
+            ordering = ['name'] # Happens on SELECT, not INSERT
 
             # Unique constraint (unique combination of name and email)
             unique_together = ['name', 'email']
@@ -640,7 +640,7 @@ Django Models Relations
 
 ### 4. Django Model Mixins
 
-- As we know, `mixins` are classes that we use to separate common functionality
+- As we know, `Mixins` are classes that we use to separate common functionality
 
 ```python
 class TimestampMixin(models.Model):
@@ -673,7 +673,7 @@ class TimestampMixin(models.Model):
 
 ### 2. Annotations and Aggregations
 
-- Annotations - we use these to add new fields to the returned result, often based on some calculations. Returns a QuerySet.
+- Annotations - we use these to add new fields to the returned result, often based on some calculations. Returns an QuerySet.
 - Example:
 
   ```python
@@ -727,8 +727,8 @@ class TimestampMixin(models.Model):
   ```
 
   ```sql
-    SELECT * FROM "myapp_author"
-    SELECT * FROM "myapp_book" INNER JOIN "myapp_book_authors" ON ("myapp_book"."id" = "myapp_book_authors"."book_id")
+  SELECT * FROM "myapp_author"
+  SELECT * FROM "myapp_book" INNER JOIN "myapp_book_authors" ON ("myapp_book"."id" = "myapp_book_authors"."book_id")
   ```
 
 ### 4. Q and F
@@ -801,55 +801,55 @@ class TimestampMixin(models.Model):
 - We always close the session after finishing work
 - We need to commit the result, similar to Django where we used `save()`
 
-        ```python
-        from sqlalchemy import create_engine
-        from sqlalchemy.orm import sessionmaker
+    ```python
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
 
-        engine = create_engine('sqlite:///example.db')
-        Session = sessionmaker(bind=engine)
-        session = Session()
+    engine = create_engine('sqlite:///example.db')
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-        with Session() as session: # a good practice
-        ...
-        ```
+    with Session() as session: # a good practice
+    ...
+    ```
 
-  5.1 Add:
+  - Add:
 
       ```python
       new_user = User(username='john_doe', email='john@example.com')
       session.add(new_user)
       ```
 
-  5.2 Query:
+  - Query:
 
       ```python
-          users = session.query(User).all()
+      users = session.query(User).all()
       ```
 
-  5.3 Update:
+  - Update:
 
-  ```python
+    ```python
+    with engine.connect() as connection:
+      # Create an update object
+      upd = update(User).where(User.name == 'John').values(nickname='new_nickname')
 
-  with engine.connect() as connection:
-  # Create an update object
-  upd = update(User).where(User.name == 'John').values(nickname='new_nickname')
+    # Execute the update
+    connection.execute(upd)
+    ```
 
-  # Execute the update
-  connection.execute(upd)
-  ```
+    or
 
-  or
+    ```python
+    session.query(User).filter(User.name == 'John').update({"nickname": "new_nickname"}, synchronize_session=False)
 
-  ```python
-  session.query(User).filter(User.name == 'John').update({"nickname": "new_nickname"}, synchronize_session=False)
-  session.commit()
-  ```
+    session.commit()
+    ```
 
-  5.4 Delete:
+  - Delete:
 
-  ```python
-  del_stmt = delete(User).where(User.name == 'John')
-  ```
+    ```python
+    del_stmt = delete(User).where(User.name == 'John')
+    ```
 
 ### 6. Transactions
 
@@ -863,8 +863,8 @@ class TimestampMixin(models.Model):
 
 1.  Many to One
     ```py
-       user_id = Column(Integer, ForeignKey('users.id'))
-       user = relationship('User')
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship('User')
     ```
 2.  One to One
 
