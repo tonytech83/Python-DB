@@ -26,7 +26,7 @@ In the "Python DB" module, knowledge about PostgreSQL and popular ORM (Object-Re
 
 ## Table of Contents:
 
-### 1. PostgreSQL
+### 1. [PostgreSQL](https://softuni.bg/trainings/4244/postgresql-september-2023#lesson-59874)
 
 <h5 align="center">
 Databases are the standard way of utilizing dynamic information in modern technologies, making them an integral part of almost every application. The intensive course on database fundamentals will acquaint students with one of the most widely used Database Management Systems (DBMS) employed in the development of contemporary information systems - PostgreSQL. The course places significant emphasis on the relational model, ER diagrams (tables and relational connections), and working with the SQL language (data retrieval, selection, projection, joins, aggregation, grouping, modification, deletion, and insertion). Fundamental knowledge is provided for working with functions, procedures, transactions, and triggers. This course lays the groundwork for working with databases, making their use in real applications easier and facilitating the understanding of concepts such as transforming a database into an object-oriented model (ORM).
@@ -40,7 +40,7 @@ Databases are the standard way of utilizing dynamic information in modern techno
 - [`Subqueries and JOINs`](https://github.com/tonytech83/Python-DB/tree/main/01_PostgreSQL/06_Subqueries_and_JOINs)
 - [`Database Programmability and Transactions`](https://github.com/tonytech83/Python-DB/tree/main/01_PostgreSQL/07_Database_Programmability)
 
-### 2. Python ORM
+### 2. [Python ORM](https://softuni.bg/trainings/4253/python-orm-october-2023#lesson-59955)
 
 <h5 align="center">
 The course covers the basics of mapping between a relational database and an object-oriented model (ORM) with a focus on the Django framework. It starts with an introduction to ORM and its key concepts before moving on to working with models in Django, including defining models, fields, and methods. Next, the course delves into advanced topics such as migrations and the Django admin interface, query operations, relationships between models, and inheritance. Students will also learn more complex techniques for working with models and using ORM queries in Django. The course also covers another popular Python ORM framework - SQLAlchemy, which offers an alternative approach. Exercises will be provided during the training to help participants solidify their knowledge at each step. By the end of this course, they will acquire foundational skills for building stable, scalable, and efficient web applications driven by databases using Python ORM frameworks.
